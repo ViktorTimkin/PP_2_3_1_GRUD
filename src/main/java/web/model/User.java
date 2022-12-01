@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "friends")
+@Table(name = "users")
 @Component
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "id")
-    private Long id;
+    private int id;
 
     @Column(name = "name")
     private String name;
@@ -19,7 +19,7 @@ public class User {
     @Column(name = "surname")
     private String surname;
 
-    public User(Long id, String name, String surname) {
+    public User(int id, String name, String surname) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -28,11 +28,11 @@ public class User {
     public User() {
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

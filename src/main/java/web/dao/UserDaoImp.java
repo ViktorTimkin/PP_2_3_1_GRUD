@@ -35,11 +35,10 @@ public class UserDaoImp implements UserDao {
         updated.setName(userUpdated.getName());
         updated.setSurname(userUpdated.getSurname());
         entityManager.merge(updated);
-
     }
 
     @Override
     public void delete(int id) {
-        entityManager.remove(show(id)); //?
+        entityManager.remove(show(id));
     }
 }

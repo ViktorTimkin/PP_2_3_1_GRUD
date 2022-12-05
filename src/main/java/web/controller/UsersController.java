@@ -3,43 +3,71 @@ package web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.model.User;
-import web.service.UserServiceImp;
+import web.service.UserService;
+
+import javax.validation.Valid;
 
 
 @Controller
-@RequestMapping("/users")
 public class UsersController {
-    private final UserServiceImp userServiceImp;
 
+    private final UserService userService;
     @Autowired
-    public UsersController(UserServiceImp userServiceImp) {
-        this.userServiceImp = userServiceImp;
+    public UsersController(UserService userService) {
+        this.userService = userService;
     }
 
-    /*@GetMapping() //получаем всех людей из дао и передаём на отображение в представлении
+    @GetMapping("/users") //получаем всех людей из дао и передаём на отображение в представлении
     public String index(Model model) {
-        model.addAttribute("users", userServiceImp.index());
-        return "friends/index";
+        model.addAttribute("users", userService.index());
+        return "/index";
     }
 
-    @GetMapping("/{id}") //для получения человека по id из дао и передаём на отображение в представлении
-    public String show(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("friends", userServiceImp.show(id));
-        return "friends/show";
+    @GetMapping("/users/{id}") //для получения человека по id из дао и передаём на отображение в представлении
+    public String show(@PathVariable("id") int id, Model model) {
+        model.addAttribute("user", userService.show(id));
+        return "/show";
     }
 
-    @GetMapping("friends/new")
-    public String newUser(Model model) {
-        model.addAttribute("friends", new User());
-        return "friends/new";
+    @GetMapping("/users/new")
+    public String newUsers(@ModelAttribute("user") User user) {
+        return "/new";
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("friends") User user) {
-        userServiceImp.save(user);
-        return "redirect:/friends"; // редирект?
-    }*/
+    public String create(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult) {
 
+        if (bindingResult.hasErrors())
+            return "/new";
+
+        userService.save(user);
+        return "redirect:/users";
+    }
+
+    @GetMapping("/users/{id}/edit")
+    public String edit(Model model, @PathVariable("id") int id) {
+        model.addAttribute("user", userService.show(id));
+        return "/edit";
+    }
+
+    @PatchMapping("/users/{id}")
+    public String update(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult,
+                         @PathVariable("id") int id) {
+        if (bindingResult.hasErrors())
+            return "/edit";
+
+        userService.update(id, user);
+        return "redirect:/users";
+    }
+
+    @DeleteMapping("/users/{id}")
+    public String delete(@PathVariable("id") int id) {
+        userService.delete(id);
+        return "redirect:/users";
+    }
 }
